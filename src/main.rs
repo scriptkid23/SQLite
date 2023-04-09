@@ -7,16 +7,15 @@ use std::path::PathBuf;
 #[command(version = "1.0")]
 #[command(about = "Clone Sqlite and research B-tree", long_about = None)]
 struct Cli {
-    /// Optional name to operate on
+    /// Optional database name to activity
     name: Option<String>,
-
-    /// Demo
-    unk: Option<String>,
 
     /// Sets a custom config file
     #[arg(short, long, value_name = "FILE")]
     config: Option<PathBuf>,
 
+    #[arg(long, value_name="Hello")]
+    create_database: Option<String>,
     /// Turn debugging information on
     #[arg(short, long, action = clap::ArgAction::Count)]
     debug: u8,
@@ -28,10 +27,9 @@ struct Cli {
 #[derive(Subcommand, Debug)]
 enum Commands {
     /// does testing things
-    Test {
+    Create {
         /// lists test values
-        #[arg(short, long)]
-        list: String,
+        name: String,
     },
 }
 fn main() {
@@ -41,7 +39,8 @@ fn main() {
         println!("Value for name: {name}");
     }
 
-    print!("{:?}", cli.unk);
+    print!("{:?}", cli.create_database.as_deref());
+
 
     if let Some(config_path) = cli.config.as_deref() {
         println!("Value for config: {}", config_path.display());
@@ -57,8 +56,8 @@ fn main() {
 
     println!("{:?}", cli.command);
     match &cli.command {
-        Some(Commands::Test { list }) => {
-            print!("{}", *list);
+        Some(Commands::Create { name }) => {
+            print!("{}", *name);
         }
         None => {}
     }
