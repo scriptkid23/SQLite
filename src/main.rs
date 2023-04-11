@@ -1,5 +1,11 @@
-use clap::{Parser, Subcommand};
-use std::path::PathBuf;
+mod contants;
+mod table;
+mod vm;
+
+use clap::Parser;
+use table::{Statement, Row};
+use std::{fs::File};
+
 
 #[derive(Parser)]
 #[command(name = "SQLite")]
@@ -8,57 +14,44 @@ use std::path::PathBuf;
 #[command(about = "Clone Sqlite and research B-tree", long_about = None)]
 struct Cli {
     /// Optional database name to activity
-    name: Option<String>,
+    database: Option<String>,
 
-    /// Sets a custom config file
-    #[arg(short, long, value_name = "FILE")]
-    config: Option<PathBuf>,
+    /// Create a database in current folder
+    #[arg(short, long, value_name = "database")]
+    create: Option<String>,
 
-    #[arg(long, value_name="Hello")]
-    create_database: Option<String>,
-    /// Turn debugging information on
-    #[arg(short, long, action = clap::ArgAction::Count)]
-    debug: u8,
+    #[arg(short, long, value_name = "database")]
+    dbinfo: Option<String>,
 
-    #[command(subcommand)]
-    command: Option<Commands>,
+    #[arg(short, long, value_name = "query")]
+    query: Option<String>,
 }
 
-#[derive(Subcommand, Debug)]
-enum Commands {
-    /// does testing things
-    Create {
-        /// lists test values
-        name: String,
-    },
-}
 fn main() {
     let cli = Cli::parse();
     // You can check the value provided by positional arguments, or option arguments
-    if let Some(name) = cli.name.as_deref() {
-        println!("Value for name: {name}");
-    }
-
-    print!("{:?}", cli.create_database.as_deref());
-
-
-    if let Some(config_path) = cli.config.as_deref() {
-        println!("Value for config: {}", config_path.display());
-    }
-
-    println!("{:?}", cli.debug);
-    match cli.debug {
-        0 => println!("Debug mode is off"),
-        1 => println!("Debug mode is kind of on"),
-        2 => println!("Debug mode is on"),
-        _ => println!("Don't be crazy"),
-    }
-
-    println!("{:?}", cli.command);
-    match &cli.command {
-        Some(Commands::Create { name }) => {
-            print!("{}", *name);
+    if let Some(database) = cli.database.as_deref() {
+        let query = cli.query.as_deref();
+        if query == None {
+            return;
         }
-        None => {}
+        let table = table::Table::db_open(database);
+        let statement = Statement {
+          
+        };
+        vm::execute_insert(, &mut table)
+        //TODO: query here!
+
+
+        
+        
+
     }
+
+    if let Some(database) = cli.create.as_deref() {
+        File::create(database).expect("create database failed");
+        println!("Executed done!");
+    }
+
+    if let Some(database) = cli.dbinfo.as_deref() {}
 }

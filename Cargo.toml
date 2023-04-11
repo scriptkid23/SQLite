@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.2.1", features = ["derive"] }
+prettytable-rs = "0.10.0"
+sqlparser = "0.32.0"
